@@ -1,0 +1,5 @@
+{
+  "name": "Fronton Tournament Manager",
+  "description": "An application to manage fronton tournaments, including player registration, team creation, category management, match scheduling, score tracking, and generating tournament summaries with Gemini AI.",
+  "requestFramePermissions": []
+}
