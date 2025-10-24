@@ -12,6 +12,7 @@ interface PlayerManagerProps {
   onUpdatePlayer: (id: string, playerData: Omit<Player, 'id'>) => void;
   onDeletePlayer: (id: string) => void;
   onImportPlayers: (players: Omit<Player, 'id'>[]) => void;
+  onViewPlayerProfile: (id: string) => void;
 }
 
 const initialFormState = {
@@ -41,7 +42,7 @@ const calculateAge = (birthDateString: string): string => {
 };
 
 
-export const PlayerManager: React.FC<PlayerManagerProps> = ({ players, onAddPlayer, onUpdatePlayer, onDeletePlayer, onImportPlayers }) => {
+export const PlayerManager: React.FC<PlayerManagerProps> = ({ players, onAddPlayer, onUpdatePlayer, onDeletePlayer, onImportPlayers, onViewPlayerProfile }) => {
   const [newPlayerData, setNewPlayerData] = useState(initialFormState);
   const [editingPlayerId, setEditingPlayerId] = useState<string | null>(null);
   const [playerToDelete, setPlayerToDelete] = useState<Player | null>(null);
@@ -356,8 +357,15 @@ export const PlayerManager: React.FC<PlayerManagerProps> = ({ players, onAddPlay
           {filteredPlayers.length > 0 ? (
             <ul className="space-y-2">
               {filteredPlayers.map((player) => (
-                <li key={player.id} className="flex justify-between items-center bg-background p-3 rounded-md border border-border">
-                  <div className="flex items-center gap-3">
+                <li key={player.id} className="flex justify-between items-center bg-background p-0 rounded-md border border-border">
+                  <div 
+                      onClick={() => onViewPlayerProfile(player.id)}
+                      className="flex items-center gap-3 p-3 flex-grow cursor-pointer rounded-l-md hover:bg-surface transition-colors"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onViewPlayerProfile(player.id); }}
+                      aria-label={`Ver perfil de ${player.firstName} ${player.lastName}`}
+                  >
                       {player.photoUrl ? (
                           <img src={player.photoUrl} alt={`${player.firstName} ${player.lastName}`} className="w-12 h-12 rounded-full object-cover" />
                       ) : (
@@ -370,16 +378,16 @@ export const PlayerManager: React.FC<PlayerManagerProps> = ({ players, onAddPlay
                           <p className="text-sm text-text-secondary">C.I: {player.idCard} &bull; {calculateAge(player.birthDate)}</p>
                       </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 pr-3">
                       <button
-                        onClick={() => handleEdit(player)}
+                        onClick={(e) => { e.stopPropagation(); handleEdit(player); }}
                         className="text-blue-400 hover:text-blue-300 p-1 rounded-full hover:bg-gray-700 transition-colors"
                         aria-label={`Editar a ${player.firstName} ${player.lastName}`}
                       >
                         <PencilIcon className="w-5 h-5" />
                       </button>
                       <button
-                        onClick={() => setPlayerToDelete(player)}
+                        onClick={(e) => { e.stopPropagation(); setPlayerToDelete(player); }}
                         className="text-red-500 hover:text-red-400 p-1 rounded-full hover:bg-gray-700 transition-colors"
                         aria-label={`Eliminar a ${player.firstName} ${player.lastName}`}
                       >

@@ -172,6 +172,7 @@ export const TeamManager: React.FC<TeamManagerProps> = ({ players, teams, onAddT
 
   const isFormValid = newTeamName.trim() !== '';
   const canConfirmImport = importedTeams && Object.keys(unmatchedPlayerActions).length === unmatchedPlayers.length;
+  const formIsDirty = newTeamName.trim() !== '' || selectedPlayerIds.length > 0;
 
   return (
     <>
@@ -274,7 +275,7 @@ export const TeamManager: React.FC<TeamManagerProps> = ({ players, teams, onAddT
                 {isEditing ? 'Actualizar Equipo' : 'Añadir Equipo'}
                 {!isEditing && <PlusIcon className="w-4 h-4" />}
             </button>
-            {isEditing && (
+            {(isEditing || formIsDirty) && (
                  <button
                     type="button"
                     onClick={handleCancelEdit}

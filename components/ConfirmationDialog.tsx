@@ -6,9 +6,19 @@ interface ConfirmationDialogProps {
   onConfirm: () => void;
   title: string;
   children: React.ReactNode;
+  confirmButtonText?: string;
+  confirmButtonClass?: string;
 }
 
-export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ isOpen, onClose, onConfirm, title, children }) => {
+export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  title, 
+  children,
+  confirmButtonText = 'Confirmar Eliminación',
+  confirmButtonClass = 'bg-red-600 text-white hover:bg-red-500 focus:ring-red-400',
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -35,9 +45,9 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({ isOpen, 
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-500 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400"
+            className={`px-4 py-2 font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 ${confirmButtonClass}`}
           >
-            Confirmar Eliminación
+            {confirmButtonText}
           </button>
         </div>
       </div>

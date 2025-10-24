@@ -184,6 +184,8 @@ const MatchCard: React.FC<{ match: Match; players: Player[], onUpdateMatch: (mat
 export const MatchScheduler: React.FC<MatchSchedulerProps> = ({ matches, teams, players, categoryName, onGenerateMatches, onUpdateMatch, isMaximized, onToggleMaximize }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [filterStatus, setFilterStatus] = useState<'all' | MatchStatus>('all');
+  const [filterTeamId, setFilterTeamId] = useState<'all' | string>('all');
+
 
   const handleExport = () => {
     if (!categoryName) {
@@ -415,8 +417,9 @@ export const MatchScheduler: React.FC<MatchSchedulerProps> = ({ matches, teams, 
   );
 
   const filteredMatches = matches.filter(match => {
-    if (filterStatus === 'all') return true;
-    return match.status === filterStatus;
+    const statusMatch = filterStatus === 'all' || match.status === filterStatus;
+    const teamMatch = filterTeamId === 'all' || match.team1.id === filterTeamId || match.team2.id === filterTeamId;
+    return statusMatch && teamMatch;
   });
 
   return (
@@ -450,37 +453,53 @@ export const MatchScheduler: React.FC<MatchSchedulerProps> = ({ matches, teams, 
         </div>
       ) : (
         <div className="flex flex-col h-full">
-            <div className="flex justify-center gap-2 mb-4 border-b border-border pb-4">
-                <button
-                    onClick={() => setFilterStatus('all')}
-                    className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
-                        filterStatus === 'all'
-                            ? 'bg-primary text-background'
-                            : 'bg-surface hover:bg-gray-600 text-text-secondary'
-                    }`}
-                >
-                    Todos
-                </button>
-                <button
-                    onClick={() => setFilterStatus(MatchStatus.Pending)}
-                    className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
-                        filterStatus === MatchStatus.Pending
-                            ? 'bg-yellow-500 text-background'
-                            : 'bg-surface hover:bg-gray-600 text-text-secondary'
-                    }`}
-                >
-                    Pendientes
-                </button>
-                <button
-                    onClick={() => setFilterStatus(MatchStatus.Finished)}
-                    className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
-                        filterStatus === MatchStatus.Finished
-                            ? 'bg-green-500 text-white'
-                            : 'bg-surface hover:bg-gray-600 text-text-secondary'
-                    }`}
-                >
-                    Finalizados
-                </button>
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4 border-b border-border pb-4">
+                <div className="flex gap-2" role="group" aria-label="Filtrar por estado">
+                    <button
+                        onClick={() => setFilterStatus('all')}
+                        className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
+                            filterStatus === 'all'
+                                ? 'bg-primary text-background'
+                                : 'bg-surface hover:bg-gray-600 text-text-secondary'
+                        }`}
+                    >
+                        Todos
+                    </button>
+                    <button
+                        onClick={() => setFilterStatus(MatchStatus.Pending)}
+                        className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
+                            filterStatus === MatchStatus.Pending
+                                ? 'bg-yellow-500 text-background'
+                                : 'bg-surface hover:bg-gray-600 text-text-secondary'
+                        }`}
+                    >
+                        Pendientes
+                    </button>
+                    <button
+                        onClick={() => setFilterStatus(MatchStatus.Finished)}
+                        className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
+                            filterStatus === MatchStatus.Finished
+                                ? 'bg-green-500 text-white'
+                                : 'bg-surface hover:bg-gray-600 text-text-secondary'
+                        }`}
+                    >
+                        Finalizados
+                    </button>
+                </div>
+                 <div className="w-full sm:w-48">
+                    <label htmlFor="team-filter" className="sr-only">Filtrar por equipo</label>
+                    <select
+                        id="team-filter"
+                        value={filterTeamId}
+                        onChange={(e) => setFilterTeamId(e.target.value)}
+                        className="w-full bg-surface border border-border rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-text-primary"
+                    >
+                        <option value="all">Todos los equipos</option>
+                        {teams.map(team => (
+                            <option key={team.id} value={team.id}>{team.name}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
             {filteredMatches.length > 0 ? (
               <div className="flex-grow space-y-3 overflow-y-auto pr-2">

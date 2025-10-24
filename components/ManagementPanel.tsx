@@ -23,8 +23,8 @@ interface ManagementPanelProps {
   onDeleteCategory: (id: string) => void;
   onSelectCategory: (id: string | null) => void;
   onImportTeams: (payload: TeamImportPayload) => void;
-  // FIX: Changed type to accept an array of CategoryImportPayload to match the expected prop type in CategoryManager and the implementation in App.tsx.
   onImportCategories: (payload: CategoryImportPayload[]) => void;
+  onViewPlayerProfile: (id: string) => void;
   isMaximized?: boolean;
   onToggleMaximize?: () => void;
 }
@@ -49,6 +49,7 @@ export const ManagementPanel: React.FC<ManagementPanelProps> = (props) => {
             onUpdatePlayer={props.onUpdatePlayer}
             onDeletePlayer={props.onDeletePlayer}
             onImportPlayers={props.onImportPlayers}
+            onViewPlayerProfile={props.onViewPlayerProfile}
         />;
       case 'teams':
         return <TeamManager 
